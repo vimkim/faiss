@@ -1,0 +1,125 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Ninja",
+      "binaryDir": "$env{MY_BUILD_DIR}",
+      "installDir": "$env{MY_INSTALL_DIR}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "FAISS_ENABLE_GPU": "OFF",
+        "FAISS_ENABLE_PYTHON": "OFF",
+        "FAISS_ENABLE_CUVS": "OFF",
+        "BUILD_TESTING": "ON",
+        "BUILD_SHARED_LIBS": "OFF",
+        "FAISS_OPT_LEVEL": "generic",
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_C_FLAGS": "-fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS": "-fdiagnostics-color=always"
+      }
+    },
+    {
+      "name": "cpu-intel",
+      "inherits": "default",
+      "cacheVariables": {
+        "BLA_VENDOR": "Intel10_64_dyn",
+        "MKL_LIBRARIES": "/opt/intel/mkl/lib/intel64"
+      }
+    },
+    {
+      "name": "cpu-shared",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build-cpu-shared",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON"
+      }
+    },
+    {
+      "name": "cpu-avx2",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build-cpu-avx2",
+      "cacheVariables": {
+        "FAISS_OPT_LEVEL": "avx2"
+      }
+    },
+    {
+      "name": "cpu-avx512",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build-cpu-avx512",
+      "cacheVariables": {
+        "FAISS_OPT_LEVEL": "avx512"
+      }
+    },
+    {
+      "name": "gpu",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-gpu",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FAISS_ENABLE_GPU": "ON",
+        "FAISS_ENABLE_PYTHON": "OFF",
+        "FAISS_ENABLE_CUVS": "OFF",
+        "BUILD_TESTING": "OFF",
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86",
+        "FAISS_OPT_LEVEL": "avx2"
+      }
+    },
+    {
+      "name": "gpu-cuvs",
+      "inherits": "gpu",
+      "binaryDir": "${sourceDir}/build-gpu-cuvs",
+      "cacheVariables": {
+        "FAISS_ENABLE_CUVS": "ON"
+      }
+    },
+    {
+      "name": "python-cpu",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build-python-cpu",
+      "cacheVariables": {
+        "FAISS_ENABLE_PYTHON": "ON"
+      }
+    },
+    {
+      "name": "python-gpu",
+      "inherits": "gpu",
+      "binaryDir": "${sourceDir}/build-python-gpu",
+      "cacheVariables": {
+        "FAISS_ENABLE_PYTHON": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "cpu-intel",
+      "configurePreset": "cpu-intel"
+    },
+    {
+      "name": "gpu",
+      "configurePreset": "gpu"
+    },
+    {
+      "name": "gpu-cuvs",
+      "configurePreset": "gpu-cuvs"
+    },
+    {
+      "name": "python-cpu",
+      "configurePreset": "python-cpu"
+    },
+    {
+      "name": "python-gpu",
+      "configurePreset": "python-gpu"
+    }
+  ]
+}
